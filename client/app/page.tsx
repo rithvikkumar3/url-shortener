@@ -163,7 +163,7 @@ export default function Home() {
 
     try {
       const normalizedUrl = normalizeUrl(longURL);
-      const response = await fetch("http://localhost:3001/shorten", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/shorten`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -217,7 +217,7 @@ export default function Home() {
     setIsRetrievingLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:3001/api/resolve/${shortURL}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resolve/${shortURL}`, {
         method: "GET",
       });
 

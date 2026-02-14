@@ -115,7 +115,7 @@ app.get('/api/resolve/:shortUrlId', async (req, res) => {
 app.listen(PORT, async() => {
     try {
         await redisClient.connect();
-        console.log(`Server is running on port http://localhost:${PORT}`);
+        console.log(`Server is running on port  http://localhost:${PORT}`);
     } catch (error) {
         console.error('Failed to start server:', error);    
     }
