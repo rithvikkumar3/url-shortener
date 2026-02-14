@@ -217,7 +217,7 @@ export default function Home() {
     setIsRetrievingLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/resolve/${shortURL}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resolve/${shortURL}`, {
         method: "GET",
       });
 
