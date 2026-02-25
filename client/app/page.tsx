@@ -38,8 +38,8 @@ export default function Home() {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [stats, setStats] = useState<StatsData>({
     totalUrls: 0,
-    totalCharsReduced: 0,
-    mostUsedUrl: null,
+    httpsPercentage: 0,
+    latestActivity: null,
   });
 
   // Toast state
