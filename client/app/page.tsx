@@ -23,8 +23,8 @@ import { isValidUrl, ensureProtocol, normalizeUrl } from "@/lib/validation";
 
 interface StatsData {
   totalUrls: number;
-  totalCharsReduced: number;
-  mostUsedUrl: UrlEntry | null;
+  httpsPercentage: number;
+  latestActivity: string | null;
 }
 
 export default function Home() {
@@ -96,20 +96,27 @@ export default function Home() {
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
 
-  // Save URL history to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("urlHistory", JSON.stringify(urlHistory));
-    
-    // Calculate stats
-    const totalCharsReduced = urlHistory.reduce(
-      (sum, entry) => sum + (entry.originalUrl.length - 30),
-      0
-    );
-    
+
+    const totalUrls = urlHistory.length;
+
+    const httpsCount = urlHistory.filter((entry) =>
+      entry.originalUrl.startsWith("https://")
+    ).length;
+
+    const httpsPercentage =
+      totalUrls === 0 ? 0 : Math.round((httpsCount / totalUrls) * 100);
+
+    const latestActivity =
+      totalUrls > 0
+        ? new Date(urlHistory[0].createdAt).toLocaleTimeString()
+        : null;
+
     setStats({
-      totalUrls: urlHistory.length,
-      totalCharsReduced: Math.max(totalCharsReduced, 0),
-      mostUsedUrl: urlHistory[0] || null,
+      totalUrls,
+      httpsPercentage,
+      latestActivity,
     });
   }, [urlHistory]);
 
@@ -330,34 +337,38 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Stats Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          <div className={`${cardClass} rounded-xl p-6 backdrop-blur-sm transform transition-all hover:scale-105`}>
-            <div className="flex items-center gap-3 mb-2">
-              <LinkIcon className="w-5 h-5 text-blue-500" />
-              <span className={`text-sm font-semibold ${mutedTextClass}`}>Total URLs</span>
-            </div>
-            <p className={`text-3xl font-bold ${textClass}`}>{stats.totalUrls}</p>
-          </div>
-          
-          <div className={`${cardClass} rounded-xl p-6 backdrop-blur-sm transform transition-all hover:scale-105`}>
-            <div className="flex items-center gap-3 mb-2">
-              <TrendingUp className="w-5 h-5 text-green-500" />
-              <span className={`text-sm font-semibold ${mutedTextClass}`}>Chars Reduced</span>
-            </div>
-            <p className={`text-3xl font-bold ${textClass}`}>{stats.totalCharsReduced}</p>
-          </div>
-          
-          <div className={`${cardClass} rounded-xl p-6 backdrop-blur-sm transform transition-all hover:scale-105`}>
-            <div className="flex items-center gap-3 mb-2">
-              <Clock className="w-5 h-5 text-purple-500" />
-              <span className={`text-sm font-semibold ${mutedTextClass}`}>Latest URL</span>
-            </div>
-            <p className={`text-sm font-mono break-all ${textClass}`}>
-              {stats.mostUsedUrl ? stats.mostUsedUrl.shortUrl.split('/').pop() : 'N/A'}
-            </p>
-          </div>
+    {/* Stats Dashboard */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+      {/* Card 1 — Total URLs */}
+      <div className={`${cardClass} rounded-xl p-6 backdrop-blur-sm transform transition-all hover:scale-105`}>
+        <div className="flex items-center gap-3 mb-2">
+          <LinkIcon className="w-5 h-5 text-blue-500" />
+          <span className={`text-sm font-semibold ${mutedTextClass}`}>Total URLs</span>
         </div>
+        <p className={`text-3xl font-bold ${textClass}`}>{stats.totalUrls}</p>
+      </div>
+
+      {/* Card 2 — Secure URLs */}
+      <div className={`${cardClass} rounded-xl p-6 backdrop-blur-sm transform transition-all hover:scale-105`}>
+        <div className="flex items-center gap-3 mb-2">
+          <TrendingUp className="w-5 h-5 text-green-500" />
+          <span className={`text-sm font-semibold ${mutedTextClass}`}>Secure URLs</span>
+        </div>
+        <p className={`text-3xl font-bold ${textClass}`}>{stats.httpsPercentage}%</p>
+        <p className={`text-xs mt-1 ${mutedTextClass}`}>HTTPS usage</p>
+      </div>
+
+      {/* Card 3 — Latest Activity */}
+      <div className={`${cardClass} rounded-xl p-6 backdrop-blur-sm transform transition-all hover:scale-105`}>
+        <div className="flex items-center gap-3 mb-2">
+          <Clock className="w-5 h-5 text-purple-500" />
+          <span className={`text-sm font-semibold ${mutedTextClass}`}>Latest Activity</span>
+        </div>
+        <p className={`text-lg font-mono ${textClass}`}>
+          {stats.latestActivity ?? "No activity"}
+        </p>
+      </div>
+    </div>
 
         {/* Generate Short URL Card */}
         <div className={`${cardClass} rounded-2xl p-8 mb-8 backdrop-blur-sm shadow-2xl transform transition-all`}>
@@ -414,9 +425,6 @@ export default function Home() {
                       {generatedShortURL}
                     </a>
                   </div>
-                  <p className={`text-xs ${mutedTextClass}`}>
-                    {Math.round((longURL.length / generatedShortURL.length - 1) * 100)}% shorter
-                  </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
