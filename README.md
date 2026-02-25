@@ -2,7 +2,7 @@
 
 ![MicroURL Banner](./assets/banner.png)
 
-Transform long URLs into shareable links instantly with QR code generation and URL history tracking.
+Transform long URLs into shareable links instantly with QR code generation, analytics, and Redis-backed high-performance redirects.
 
 ## 🌟 Features
 
@@ -13,7 +13,7 @@ Transform long URLs into shareable links instantly with QR code generation and U
 - **🎨 Modern UI** - Clean, intuitive interface with dark mode
 - **⚙️ Base62 Encoding** - Efficient encoding for compact URL codes
 - **🚀 Fast & Reliable** - Redis-backed storage for instant retrieval
-- **📈 Analytics** - Track clicks and access statistics
+- **📈 Analytics** - Per-URL click tracking with last-access timestamps
 
 ## 📸 Screenshots
 
